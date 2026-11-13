@@ -14,7 +14,6 @@
 }
 
 .icon::before { content: var(--glyph); }
-.icon-share { --glyph: "\F0B93"; }
 .icon-arrow { --glyph: "\F005C"; }
 .icon-copy { --glyph: "\F018F"; }
 .icon-check { --glyph: "\F012C"; }
@@ -27,6 +26,26 @@
 .icon-instagram { --glyph: "\F02FE"; }
 .icon-email { --glyph: "\F01F0"; }
 .icon-web { --glyph: "\F059F"; }
+
+.icon-chevron::before {
+  content: "";
+  inline-size: 0.42em;
+  block-size: 0.42em;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.icon-clock::before {
+  content: "";
+  inline-size: 0.83em;
+  block-size: 0.83em;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background:
+    linear-gradient(currentColor, currentColor) center 29% / 1.5px 29% no-repeat,
+    linear-gradient(currentColor, currentColor) 74% center / 25% 1.5px no-repeat;
+}
 
 .icon-roblox::before {
   content: "";
