@@ -1,8 +1,3 @@
-/*
-  Edit this file to personalize the page.
-  Add, remove, or reorder entries in links and projects. Use full https:// URLs for links.
-  Use "" to hide the handle, bio, or a description. Leave avatar blank for initials.
-*/
 window.LINK_PAGE = {
   language: "en",
   direction: "ltr",
@@ -11,14 +6,14 @@ window.LINK_PAGE = {
     name: "Liel",
     handle: "@N0tLiel",
     bio: "My Life Basicily",
-    avatar: "", // Example: "assets/my-avatar.jpg"
+    avatar: "", 
     cover: "assets/flight.webp",
   },
 
   fonts: {
     heading: '"Inter", system-ui, sans-serif',
     body: '"Inter", system-ui, sans-serif',
-    stylesheet: "", // Optional URL or local CSS file that loads another font.
+    stylesheet: "", 
   },
 
   theme: {
@@ -52,7 +47,8 @@ window.LINK_PAGE = {
     manualHint: "Select and copy the address below.",
   },
 
-  // Icons: discord, roblox, github, plane, camera, youtube, instagram, email, web, link, clock.
+  // icons: discord, roblox, github, plane, camera, youtube, instagram, email, web, link, clock.
+  
   links: [
     {
       title: "Instagram",
@@ -75,6 +71,6 @@ window.LINK_PAGE = {
   ],
 
   projects: [
-    // { title: "Project name", description: "What you’re building", icon: "roblox" },
+    // { title: "Project name", description: "What you’re building", icon: "blah" },
   ],
 };
