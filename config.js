@@ -53,7 +53,7 @@ window.LINK_PAGE = {
     {
       title: "Instagram",
       description: "Insta Page",
-      url: "https://github.com/N0tL1el",
+      url: "https://www.instagram.com/itss.liel/",
       icon: "instagram",
     },
     {
@@ -65,7 +65,7 @@ window.LINK_PAGE = {
     {
       title: "Discord",
       description: "My Discord User",
-      discordUsername: "n0tliel",
+      discordUsername: "l18el",
       icon: "discord",
     },
   ],
