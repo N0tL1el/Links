@@ -16,10 +16,6 @@
     <main class="page">
       <header class="profile">
         <div class="cover" id="cover" aria-hidden="true"></div>
-        <button class="share-button" id="share-button" type="button" hidden>
-          <span class="icon icon-share" aria-hidden="true"></span>
-          <span id="share-label"></span>
-        </button>
 
         <div class="profile-details">
           <div class="avatar" aria-hidden="true">
@@ -34,46 +30,53 @@
         </div>
       </header>
 
-      <section class="links" id="links-section" aria-labelledby="links-heading" hidden>
-        <h2 id="links-heading"></h2>
-        <ul class="link-list" id="link-list" role="list"></ul>
-      </section>
+      <div class="profile-sections" id="profile-sections" hidden>
+        <div class="tabs" id="profile-tabs" role="tablist">
+          <button class="tab" id="links-tab" type="button" role="tab" aria-selected="true" aria-controls="links-panel"></button>
+          <button class="tab" id="projects-tab" type="button" role="tab" aria-selected="false" aria-controls="projects-panel" tabindex="-1"></button>
+        </div>
+        <section class="tab-panel" id="links-panel" role="tabpanel" aria-labelledby="links-tab">
+          <ul class="card-list" id="link-list" role="list"></ul>
+          <p class="panel-message" id="no-links" hidden></p>
+        </section>
+        <section class="tab-panel" id="projects-panel" role="tabpanel" aria-labelledby="projects-tab" tabindex="0" hidden>
+          <ul class="card-list" id="project-list" role="list"></ul>
+        </section>
+      </div>
     </main>
 
     <template id="card-template">
       <li class="card">
-        <a class="card-link" target="_blank" rel="noopener noreferrer">
+        <div class="card-content">
           <span class="card-tile" aria-hidden="true"><span class="icon"></span></span>
           <span class="card-text">
             <span class="card-title" dir="auto"></span>
             <span class="card-description" dir="auto"></span>
           </span>
-          <span class="icon icon-arrow card-arrow" aria-hidden="true"></span>
-        </a>
-        <button class="copy-button" type="button">
-          <span class="icon icon-copy" aria-hidden="true"></span>
-        </button>
+        </div>
       </li>
     </template>
 
-    <dialog id="share-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-hint">
+    <template id="copy-template">
+      <button class="copy-button" type="button">
+        <span class="icon icon-copy" aria-hidden="true"></span>
+      </button>
+    </template>
+
+    <dialog id="copy-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-hint">
       <div class="dialog-panel">
         <button class="dialog-close" id="dialog-close" type="button">
           <span class="icon icon-close" aria-hidden="true"></span>
         </button>
         <h2 id="dialog-title"></h2>
         <p id="dialog-hint" class="dialog-hint"></p>
-        <input class="address" id="share-address" type="text" dir="ltr" readonly spellcheck="false">
-        <div class="dialog-actions">
-          <button class="dialog-copy" id="dialog-copy" type="button">
-            <span class="icon icon-copy" aria-hidden="true"></span>
-            <span id="dialog-copy-label"></span>
-          </button>
-          <button class="dialog-native" id="dialog-native" type="button" hidden>
-            <span class="icon icon-share" aria-hidden="true"></span>
-            <span id="dialog-native-label"></span>
-          </button>
-        </div>
+        <p class="copy-value discord-username" id="discord-username" dir="ltr" hidden></p>
+        <input class="copy-value" id="dialog-value" type="text" dir="ltr" readonly spellcheck="false">
+        <button class="dialog-copy" id="dialog-copy" type="button">
+          <span class="icon icon-copy" aria-hidden="true"></span>
+          <span id="dialog-copy-label"></span>
+        </button>
+        <p class="visually-hidden" id="dialog-status" role="status"></p>
       </div>
     </dialog>
     <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
