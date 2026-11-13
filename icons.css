@@ -1,0 +1,68 @@
+@font-face {
+  font-family: "Link Icons";
+  src: url("assets/icons.woff2") format("woff2");
+  font-display: block;
+}
+
+.icon {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 1em;
+  block-size: 1em;
+  font: normal 1em/1 "Link Icons";
+}
+
+.icon::before { content: var(--glyph); }
+.icon-arrow { --glyph: "\F005C"; }
+.icon-copy { --glyph: "\F018F"; }
+.icon-check { --glyph: "\F012C"; }
+.icon-close { --glyph: "\F0156"; }
+.icon-link { --glyph: "\F0339"; }
+.icon-github { --glyph: "\F02A4"; }
+.icon-plane { --glyph: "\F001D"; }
+.icon-camera { --glyph: "\F0D5D"; }
+.icon-youtube { --glyph: "\F05C3"; }
+.icon-instagram { --glyph: "\F02FE"; }
+.icon-email { --glyph: "\F01F0"; }
+.icon-web { --glyph: "\F059F"; }
+
+.icon-chevron::before {
+  content: "";
+  inline-size: 0.42em;
+  block-size: 0.42em;
+  border-top: 1.5px solid currentColor;
+  border-right: 1.5px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.icon-clock::before {
+  content: "";
+  inline-size: 0.83em;
+  block-size: 0.83em;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  background:
+    linear-gradient(currentColor, currentColor) center 29% / 1.5px 29% no-repeat,
+    linear-gradient(currentColor, currentColor) 74% center / 25% 1.5px no-repeat;
+}
+
+.icon-roblox::before {
+  content: "";
+  inline-size: 0.75em;
+  block-size: 0.75em;
+  border: 0.25em solid currentColor;
+  transform: rotate(15deg);
+}
+
+.icon-discord::before {
+  content: "";
+  inline-size: 1em;
+  block-size: 0.8em;
+  background: currentColor;
+  mask-image: radial-gradient(circle at 34% 57%, transparent 0 1.3px, black 1.7px),
+              radial-gradient(circle at 66% 57%, transparent 0 1.3px, black 1.7px);
+  mask-composite: intersect;
+  clip-path: polygon(17% 13%, 35% 3%, 41% 15%, 59% 15%, 65% 3%, 83% 13%,
+    95% 37%, 100% 69%, 77% 91%, 65% 74%, 35% 74%, 23% 91%, 0 69%, 5% 37%);
+}
