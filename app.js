@@ -6,7 +6,7 @@ const profile = settings.profile;
 const root = document.documentElement;
 const byId = (id) => document.getElementById(id);
 const linkSchemes = ["https:", "http:", "mailto:", "tel:"];
-const cardIcons = new Set(["discord", "roblox", "github", "plane", "camera", "youtube", "instagram", "email", "web", "link"]);
+const cardIcons = new Set(["discord", "roblox", "github", "plane", "camera", "youtube", "instagram", "email", "web", "link", "clock"]);
 const finePointer = matchMedia("(hover: hover) and (pointer: fine)");
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -74,74 +74,44 @@ if (cover) {
   byId("cover").style.setProperty("--cover-image", `url(${JSON.stringify(cover.href)})`);
 }
 
-const shareButton = byId("share-button");
-const dialog = byId("share-dialog");
+const dialog = byId("copy-dialog");
 const dialogCopy = byId("dialog-copy");
-const nativeShare = byId("dialog-native");
-const address = byId("share-address");
+const dialogValue = byId("dialog-value");
+const discordUsername = byId("discord-username");
+const dialogStatus = byId("dialog-status");
+const dialogCopyLabel = byId("dialog-copy-label");
 const toast = byId("toast");
-const localAddress = new URL(window.location.href);
-localAddress.search = "";
-localAddress.hash = "";
-const shareAddress = resolveUrl(settings.shareUrl, ["https:", "http:"]) || localAddress;
 const resetCopyTimers = new WeakMap();
 let toastTimer;
 let dialogState;
 
-byId("share-label").textContent = copy.shareButton;
-byId("dialog-copy-label").textContent = copy.copyLink;
-byId("dialog-native-label").textContent = copy.nativeShare;
 byId("dialog-close").setAttribute("aria-label", copy.close);
-address.setAttribute("aria-label", copy.address);
 
-function openDialog({ url, title, hint, opener, allowNative = false }) {
+function openCopyDialog(value, opener, isDiscord = false) {
   if (dialog.open) return;
-  const shareData = { title: document.title, url };
-  dialogState = { opener, shareData };
-  byId("dialog-title").textContent = title;
-  byId("dialog-hint").textContent = hint;
-  address.value = url;
-  nativeShare.hidden = !(
-    allowNative &&
-    /^https?:/.test(url) &&
-    typeof navigator.share === "function" &&
-    (!navigator.canShare || navigator.canShare(shareData))
-  );
+  dialogState = { value, opener, isDiscord };
+  byId("dialog-title").textContent = isDiscord ? copy.discordTitle : copy.manualTitle;
+  byId("dialog-hint").textContent = isDiscord ? copy.discordHint : copy.manualHint;
+  dialogValue.value = value;
+  dialogValue.hidden = isDiscord;
+  dialogValue.setAttribute("aria-label", copy.address);
+  setOptionalText(discordUsername, isDiscord ? value : "");
+  dialogCopyLabel.textContent = isDiscord ? copy.copyUsername : copy.copyLink;
+  dialogCopy.querySelector(".icon").classList.replace("icon-check", "icon-copy");
+  dialogStatus.textContent = "";
   dialog.showModal();
-  address.focus({ preventScroll: true });
-  address.select();
+  (isDiscord ? dialogCopy : dialogValue).focus({ preventScroll: true });
 }
-
-shareButton.addEventListener("click", () => {
-  openDialog({
-    url: shareAddress.href,
-    title: copy.shareTitle,
-    hint: shareAddress.protocol === "file:" ? copy.localShareHint : copy.shareHint,
-    opener: shareButton,
-    allowNative: true,
-  });
-});
-shareButton.hidden = false;
 
 byId("dialog-close").addEventListener("click", () => dialog.close());
 dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 });
 dialog.addEventListener("close", () => {
-  if (!dialog.open) dialogState.opener.focus();
+  if (!dialog.open) dialogState.opener.focus({ preventScroll: true });
 });
 
-nativeShare.addEventListener("click", async () => {
-  const state = dialogState;
-  try {
-    await navigator.share(state.shareData);
-    if (dialogState === state) dialog.close();
-  } catch (error) {
-    if (error.name !== "AbortError" && dialogState === state && dialog.open) address.focus();
-  }
-});
-
-address.addEventListener("focus", () => address.select());
+dialogValue.addEventListener("focus", () => dialogValue.select());
 
 async function writeClipboard(value) {
   try {
@@ -176,14 +146,13 @@ async function writeClipboard(value) {
   return succeeded;
 }
 
-function showCopied(button) {
+function showLinkCopied(button) {
   const icon = button.querySelector(".icon");
-  const idleIcon = button === shareButton ? "icon-share" : "icon-copy";
   clearTimeout(resetCopyTimers.get(button));
-  icon.classList.replace(idleIcon, "icon-check");
+  icon.classList.replace("icon-copy", "icon-check");
   button.dataset.copied = "";
   resetCopyTimers.set(button, setTimeout(() => {
-    icon.classList.replace("icon-check", idleIcon);
+    icon.classList.replace("icon-check", "icon-copy");
     delete button.dataset.copied;
   }, 1750));
 
@@ -198,48 +167,85 @@ function showCopied(button) {
 
 dialogCopy.addEventListener("click", async () => {
   const state = dialogState;
-  const copied = await writeClipboard(state.shareData.url);
-  if (dialogState !== state) return;
-  if (copied) {
-    if (dialog.open) dialog.close();
-    showCopied(state.opener);
+  const copied = await writeClipboard(state.value);
+  if (dialogState !== state || !dialog.open) return;
+
+  if (!copied) {
+    byId("dialog-hint").textContent = state.isDiscord ? copy.manualUsernameHint : copy.manualHint;
+    if (!state.isDiscord) dialogValue.focus();
     return;
   }
-  if (!dialog.open) return;
-  byId("dialog-hint").textContent = copy.manualHint;
-  address.focus();
-  address.select();
+
+  if (state.isDiscord) {
+    dialogCopy.querySelector(".icon").classList.replace("icon-copy", "icon-check");
+    dialogCopyLabel.textContent = copy.usernameCopied;
+    dialogStatus.textContent = copy.usernameCopied;
+    return;
+  }
+
+  dialog.close();
+  showLinkCopied(state.opener);
 });
 
-const list = byId("link-list");
-const template = byId("card-template");
-for (const entry of settings.links) {
-  const url = resolveUrl(entry.url, linkSchemes);
-  if (!url || typeof entry.title !== "string" || !entry.title.trim()) continue;
+const linkList = byId("link-list");
+const projectList = byId("project-list");
+const cardTemplate = byId("card-template");
+const copyTemplate = byId("copy-template");
 
-  const card = template.content.firstElementChild.cloneNode(true);
-  const anchor = card.querySelector(".card-link");
-  const button = card.querySelector(".copy-button");
-  const icon = card.querySelector(".card-tile .icon");
+function createCard(entry) {
+  const card = cardTemplate.content.firstElementChild.cloneNode(true);
   const iconName = cardIcons.has(entry.icon) ? entry.icon : "link";
-
-  if (entry.featured) card.classList.add("is-featured");
-  anchor.href = url.href;
-  if (!/^https?:$/.test(url.protocol)) anchor.removeAttribute("target");
-  icon.classList.add(`icon-${iconName}`);
+  card.querySelector(".card-tile .icon").classList.add(`icon-${iconName}`);
   card.querySelector(".card-title").textContent = entry.title;
   setOptionalText(card.querySelector(".card-description"), entry.description);
-  const buttonLabel = copy.copyLinkFor.replace("{title}", () => entry.title);
-  button.setAttribute("aria-label", buttonLabel);
-  button.title = buttonLabel;
+  return card;
+}
 
-  button.addEventListener("click", async () => {
-    if (await writeClipboard(url.href)) {
-      showCopied(button);
-      return;
+for (const entry of settings.links) {
+  if (typeof entry.title !== "string" || !entry.title.trim()) continue;
+  const username = typeof entry.discordUsername === "string" ? entry.discordUsername.trim() : "";
+  const url = username ? null : resolveUrl(entry.url, linkSchemes);
+  if (!username && !url) continue;
+
+  const card = createCard(entry);
+  card.classList.add("card-interactive");
+  card.classList.toggle("is-featured", Boolean(entry.featured));
+  const contents = card.firstElementChild;
+  const action = document.createElement(username ? "button" : "a");
+  action.className = "card-content card-action";
+  action.append(...contents.childNodes);
+  contents.replaceWith(action);
+
+  const actionIcon = document.createElement("span");
+  actionIcon.className = username ? "icon card-arrow icon-chevron" : "icon card-arrow icon-arrow";
+  actionIcon.setAttribute("aria-hidden", "true");
+  action.append(actionIcon);
+
+  if (username) {
+    action.type = "button";
+    action.setAttribute("aria-haspopup", "dialog");
+    action.setAttribute("aria-controls", dialog.id);
+    action.addEventListener("click", () => openCopyDialog(username, action, true));
+  } else {
+    action.href = url.href;
+    if (/^https?:$/.test(url.protocol)) {
+      action.target = "_blank";
+      action.rel = "noopener noreferrer";
     }
-    openDialog({ url: url.href, title: copy.manualTitle, hint: copy.manualHint, opener: button });
-  });
+
+    const button = copyTemplate.content.firstElementChild.cloneNode(true);
+    const buttonLabel = copy.copyLinkFor.replace("{title}", () => entry.title);
+    button.setAttribute("aria-label", buttonLabel);
+    button.title = buttonLabel;
+    button.addEventListener("click", async () => {
+      if (await writeClipboard(url.href)) {
+        showLinkCopied(button);
+        return;
+      }
+      openCopyDialog(url.href, button);
+    });
+    card.append(button);
+  }
 
   card.addEventListener("pointermove", (event) => {
     if (!finePointer.matches || reducedMotion.matches || event.pointerType === "touch") return;
@@ -247,10 +253,60 @@ for (const entry of settings.links) {
     card.style.setProperty("--pointer-x", `${event.clientX - bounds.left}px`);
     card.style.setProperty("--pointer-y", `${event.clientY - bounds.top}px`);
   });
-  list.append(card);
+  linkList.append(card);
 }
 
-if (list.childElementCount) {
-  byId("links-heading").textContent = copy.linksHeading;
-  byId("links-section").hidden = false;
+if (!linkList.childElementCount) {
+  setOptionalText(byId("no-links"), copy.noLinks);
+  byId("links-panel").tabIndex = 0;
 }
+
+for (const project of settings.projects || []) {
+  if (typeof project.title !== "string" || !project.title.trim()) continue;
+  projectList.append(createCard(project));
+}
+if (!projectList.childElementCount) {
+  projectList.append(createCard({
+    title: copy.noProjectsTitle,
+    description: copy.noProjectsDescription,
+    icon: "clock",
+  }));
+}
+
+const tabList = byId("profile-tabs");
+const tabs = Array.from(tabList.querySelectorAll('[role="tab"]'));
+tabList.setAttribute("aria-label", copy.tabsLabel);
+byId("links-tab").textContent = copy.linksHeading;
+byId("projects-tab").textContent = copy.projectsHeading;
+
+function selectTab(selectedTab) {
+  for (const tab of tabs) {
+    const selected = tab === selectedTab;
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    byId(tab.getAttribute("aria-controls")).hidden = !selected;
+  }
+}
+
+for (const tab of tabs) {
+  tab.addEventListener("click", () => selectTab(tab));
+  tab.addEventListener("keydown", (event) => {
+    const backwards = root.dir === "rtl" ? "ArrowRight" : "ArrowLeft";
+    const forwards = root.dir === "rtl" ? "ArrowLeft" : "ArrowRight";
+    const index = tabs.indexOf(tab);
+    let nextIndex;
+    switch (event.key) {
+      case backwards: nextIndex = (index + tabs.length - 1) % tabs.length; break;
+      case forwards: nextIndex = (index + 1) % tabs.length; break;
+      case "Home": nextIndex = 0; break;
+      case "End": nextIndex = tabs.length - 1; break;
+      default: return;
+    }
+    event.preventDefault();
+    const nextTab = tabs[nextIndex];
+    selectTab(nextTab);
+    nextTab.focus();
+  });
+}
+
+byId("profile-sections").hidden = false;
