@@ -72,6 +72,6 @@ window.LINK_PAGE = {
   ],
 
   projects: [
-    // { title: "Project name", description: "What you’re building", icon: "blah" },
+     { title: "root.il", description: "SIEM Program for small Buissness", icon: "web" },
   ],
 };
