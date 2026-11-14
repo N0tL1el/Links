@@ -55,6 +55,7 @@ window.LINK_PAGE = {
       description: "Insta Page",
       url: "https://www.instagram.com/itss.liel/",
       icon: "instagram",
+      featured: true,
     },
     {
       title: "GitHub",
