@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en" dir="ltr">
   <head>
@@ -5,14 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="dark">
     <meta name="description" content="">
+
     <title></title>
+
     <link rel="icon" href="assets/favicon.png" type="image/png">
+
     <link rel="stylesheet" href="icons.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="discord-profile.css">
+
     <script src="config.js" defer></script>
     <script src="app.js" defer></script>
   </head>
+
   <body>
     <main class="page">
       <header class="profile">
@@ -23,24 +29,56 @@
             <span id="avatar-mark"></span>
             <img id="avatar-image" alt="" width="72" height="72" hidden>
           </div>
+
           <div class="identity">
             <h1 id="profile-name" dir="auto"></h1>
             <bdi id="profile-handle" class="handle" hidden></bdi>
           </div>
+
           <p id="profile-bio" class="bio" dir="auto" hidden></p>
         </div>
       </header>
 
       <div class="profile-sections" id="profile-sections" hidden>
         <div class="tabs" id="profile-tabs" role="tablist">
-          <button class="tab" id="links-tab" type="button" role="tab" aria-selected="true" aria-controls="links-panel"></button>
-          <button class="tab" id="projects-tab" type="button" role="tab" aria-selected="false" aria-controls="projects-panel" tabindex="-1"></button>
+          <button
+            class="tab"
+            id="links-tab"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="links-panel">
+          </button>
+
+          <button
+            class="tab"
+            id="projects-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="projects-panel"
+            tabindex="-1">
+          </button>
         </div>
-        <section class="tab-panel" id="links-panel" role="tabpanel" aria-labelledby="links-tab">
+
+        <section
+          class="tab-panel"
+          id="links-panel"
+          role="tabpanel"
+          aria-labelledby="links-tab">
+
           <ul class="card-list" id="link-list" role="list"></ul>
           <p class="panel-message" id="no-links" hidden></p>
         </section>
-        <section class="tab-panel" id="projects-panel" role="tabpanel" aria-labelledby="projects-tab" tabindex="0" hidden>
+
+        <section
+          class="tab-panel"
+          id="projects-panel"
+          role="tabpanel"
+          aria-labelledby="projects-tab"
+          tabindex="0"
+          hidden>
+
           <ul class="card-list" id="project-list" role="list"></ul>
         </section>
       </div>
@@ -49,7 +87,10 @@
     <template id="card-template">
       <li class="card">
         <div class="card-content">
-          <span class="card-tile" aria-hidden="true"><span class="icon"></span></span>
+          <span class="card-tile" aria-hidden="true">
+            <span class="icon"></span>
+          </span>
+
           <span class="card-text">
             <span class="card-title" dir="auto"></span>
             <span class="card-description" dir="auto"></span>
@@ -64,25 +105,59 @@
       </button>
     </template>
 
-    <dialog id="copy-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-hint">
+    <dialog
+      id="copy-dialog"
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-hint">
+
       <div class="dialog-panel">
         <button class="dialog-close" id="dialog-close" type="button">
           <span class="icon icon-close" aria-hidden="true"></span>
         </button>
+
         <h2 id="dialog-title"></h2>
         <p id="dialog-hint" class="dialog-hint"></p>
-        <p class="copy-value discord-username" id="discord-username" dir="ltr" hidden></p>
-        <input class="copy-value" id="dialog-value" type="text" dir="ltr" readonly spellcheck="false">
+
+        <p
+          class="copy-value discord-username"
+          id="discord-username"
+          dir="ltr"
+          hidden>
+        </p>
+
+        <input
+          class="copy-value"
+          id="dialog-value"
+          type="text"
+          dir="ltr"
+          readonly
+          spellcheck="false">
+
         <button class="dialog-copy" id="dialog-copy" type="button">
           <span class="icon icon-copy" aria-hidden="true"></span>
           <span id="dialog-copy-label"></span>
         </button>
-        <p class="visually-hidden" id="dialog-status" role="status"></p>
+
+        <p
+          class="visually-hidden"
+          id="dialog-status"
+          role="status">
+        </p>
       </div>
     </dialog>
-    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+
+    <div
+      class="toast"
+      id="toast"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true">
+
       <span class="icon icon-check" aria-hidden="true"></span>
       <span id="toast-text"></span>
     </div>
+
+    <!-- Discord Profile Integration -->
+    <script src="discord-profile.js"></script>
   </body>
 </html>
